@@ -1,20 +1,34 @@
 const express = require('express')
 const app = express()
 const port = 3000
+app.use(express.json());
+app.use(express.urlencoded({
+  extended: true
+}));
 
 
 
-const { MongoClient } = require('mongodb');
-const uri = "mongodb+srv://admin:admin@cluster0.dfwwe.mongodb.net/myFirstDatabase?retryWrites=true&w=majority";
-const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true });
-client.connect(err => {
-  const collection = client.db("test").collection("devices");
-  // perform actions on the collection object
-  client.close();
-});
 
-app.get('/', (req, res) => {
-  res.send('Hello World!')
+
+app.post('/categorie', (req, response) => {
+    var MongoClient = require('mongodb').MongoClient;
+    var url = "mongodb+srv://admin:admin@cluster0.dfwwe.mongodb.net/Herkansing?retryWrites=true&w=majority";
+
+    MongoClient.connect(url, function(err, db) {
+    if (err) throw err;
+    var dbo = db.db("Herkansing");
+    var myobj = req.body
+    dbo.collection("Categories").insertOne(myobj, function(err, res) {
+        if (err) throw err;
+        console.log("1 document inserted");
+        db.close();
+        response.send(myobj)
+        
+    });
+    });
+
+  
+
 })
 
 app.listen(port, () => {
