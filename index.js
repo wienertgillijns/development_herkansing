@@ -75,11 +75,20 @@ app.get('/logs', (req, response) => {
     var dbo = db.db("Herkansing");
     
     var query = { categorieId: req.query.categorieId };
-    dbo.collection("Logs").find(query).toArray(function(err, result) {
-        if (err) throw err;
-        response.send(result);
-        db.close();
-    });
+
+    dbo.collection("Categories").find({}).toArray(function(err, result2) {
+
+        dbo.collection("Logs").find(query).toArray(function(err, result) {
+            if (err) throw err;
+            for(const row of result) {
+                row.categorie = result2.find(x => x._id = query.categorieId);
+                delete row.categorieId 
+            }
+            response.send(result);
+            db.close();
+        });
+    })
+
         });
 })
 
