@@ -5,7 +5,7 @@ app.use(express.json());
 app.use(express.urlencoded({
   extended: true
 }));
-
+var mongo = require('mongodb');
 
 
 
@@ -25,6 +25,26 @@ app.post('/categorie', (req, response) => {
         response.send(myobj)
         
     });
+    });
+})
+
+app.get('/categorie/all', async (req, response) => {
+    var MongoClient = require('mongodb').MongoClient;
+    var url = "mongodb+srv://admin:admin@cluster0.dfwwe.mongodb.net/Herkansing?retryWrites=true&w=majority";
+
+    MongoClient.connect(url, function(err, db) {
+    if (err) throw err;
+    var dbo = db.db("Herkansing");
+    dbo.collection("Categories").find({}).toArray(async function(err, result) {
+        if(err) throw err;
+        for(const row of result) {
+            
+            const logs  = await dbo.collection("Logs").find({categorieId  : row._id.toString() }).toArray() 
+            row.logs = logs
+
+        }
+        response.send(result);
+    })
     });
 })
 
