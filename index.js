@@ -66,6 +66,28 @@ app.post('/logs', (req, response) => {
     });
 })
 
+app.get('/logs/all', (req, response) => {
+    var MongoClient = require('mongodb').MongoClient;
+    var ObjectId = require('mongodb').ObjectID;
+    var url = "mongodb+srv://admin:admin@cluster0.dfwwe.mongodb.net/Herkansing?retryWrites=true&w=majority";
+
+    MongoClient.connect(url, function(err, db) {
+    if (err) throw err;
+    var dbo = db.db("Herkansing");
+    dbo.collection("Logs").find({}).toArray(function(err, result) {
+        if (err) throw err;
+        dbo.collection("Categories").find({}).toArray(function(err, result2) {
+            for(const row of result) {
+                row.categorie = result2.find(x => x._id = row.categorieId);  
+                delete row.categorieId 
+            }
+            response.send(result);
+        })
+       // db.close();
+    });
+    });
+})
+
 app.get('/logs', (req, response) => {
     var MongoClient = require('mongodb').MongoClient;
     var url = "mongodb+srv://admin:admin@cluster0.dfwwe.mongodb.net/Herkansing?retryWrites=true&w=majority";
