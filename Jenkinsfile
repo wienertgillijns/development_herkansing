@@ -2,7 +2,7 @@ pipeline {
     agent any
 
     stages {
-        stage('Build') {
+        stage('nodeversion') {
             steps {
              script {
             def packageJSON = readJSON file: 'package.json'
@@ -10,9 +10,12 @@ pipeline {
             echo "${packageJSONVersion}"
          }
          }
-         steps {
+        }
+        stage('build') {
+            steps {
                 sh 'docker build -t started .'
             }
         }
+
     }
 }
