@@ -13,7 +13,8 @@ pipeline {
         }
         stage('build') {
             steps {
-                sh 'docker build -t started .'
+                sh "docker build -t ${packageJSONVersion} ."
+                sh "docker run -dp 3000:3000 ${packageJSONVersion}"
             }
         }
 
