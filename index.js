@@ -5,7 +5,7 @@ app.use(express.json());
 app.use(express.urlencoded({
   extended: true
 }));
-
+var mongo = require('mongodb');
 
 
 
@@ -28,6 +28,26 @@ app.post('/categorie', (req, response) => {
     });
 })
 
+app.get('/categorie/all', async (req, response) => {
+    var MongoClient = require('mongodb').MongoClient;
+    var url = "mongodb+srv://admin:admin@cluster0.dfwwe.mongodb.net/Herkansing?retryWrites=true&w=majority";
+
+    MongoClient.connect(url, function(err, db) {
+    if (err) throw err;
+    var dbo = db.db("Herkansing");
+    dbo.collection("Categories").find({}).toArray(async function(err, result) {
+        if(err) throw err;
+        for(const row of result) {
+            
+            const logs  = await dbo.collection("Logs").find({categorieId  : row._id.toString() }).toArray() 
+            row.logs = logs
+
+        }
+        response.send(result);
+    })
+    });
+})
+
 app.post('/logs', (req, response) => {
     var MongoClient = require('mongodb').MongoClient;
     var url = "mongodb+srv://admin:admin@cluster0.dfwwe.mongodb.net/Herkansing?retryWrites=true&w=majority";
@@ -46,6 +66,28 @@ app.post('/logs', (req, response) => {
     });
 })
 
+app.get('/logs/all', (req, response) => {
+    var MongoClient = require('mongodb').MongoClient;
+    var ObjectId = require('mongodb').ObjectID;
+    var url = "mongodb+srv://admin:admin@cluster0.dfwwe.mongodb.net/Herkansing?retryWrites=true&w=majority";
+
+    MongoClient.connect(url, function(err, db) {
+    if (err) throw err;
+    var dbo = db.db("Herkansing");
+    dbo.collection("Logs").find({}).toArray(function(err, result) {
+        if (err) throw err;
+        dbo.collection("Categories").find({}).toArray(function(err, result2) {
+            for(const row of result) {
+                row.categorie = result2.find(x => x._id = row.categorieId);  
+                delete row.categorieId 
+            }
+            response.send(result);
+        })
+       // db.close();
+    });
+    });
+})
+
 app.get('/logs', (req, response) => {
     var MongoClient = require('mongodb').MongoClient;
     var url = "mongodb+srv://admin:admin@cluster0.dfwwe.mongodb.net/Herkansing?retryWrites=true&w=majority";
@@ -55,11 +97,20 @@ app.get('/logs', (req, response) => {
     var dbo = db.db("Herkansing");
     
     var query = { categorieId: req.query.categorieId };
-    dbo.collection("Logs").find(query).toArray(function(err, result) {
-        if (err) throw err;
-        response.send(result);
-        db.close();
-    });
+
+    dbo.collection("Categories").find({}).toArray(function(err, result2) {
+
+        dbo.collection("Logs").find(query).toArray(function(err, result) {
+            if (err) throw err;
+            for(const row of result) {
+                row.categorie = result2.find(x => x._id = query.categorieId);
+                delete row.categorieId 
+            }
+            response.send(result);
+            db.close();
+        });
+    })
+
         });
 })
 
