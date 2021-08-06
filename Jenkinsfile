@@ -10,6 +10,9 @@ pipeline {
             echo "${packageJSONVersion}"
          }
          }
+         steps {
+                sh 'docker build -t started .'
+            }
         }
     }
 }
