@@ -11,7 +11,7 @@ pipeline {
          }
          }
         }
-        stage('build') {
+        stage('build & run') {
             steps {
                 sh "docker build -t ${packageJSONVersion} ."
                 sh "docker run -dp 3000:3000 ${packageJSONVersion}"
