@@ -4,8 +4,12 @@ pipeline {
     stages {
         stage('Build') {
             steps {
-                echo 'Building..'
-            }
+             script {
+            def packageJSON = readJSON file: 'package.json'
+            def packageJSONVersion = packageJSON.version
+            echo "${packageJSONVersion}"
+         }
+         }
         }
     }
 }
