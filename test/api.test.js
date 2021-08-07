@@ -2,8 +2,11 @@ process.env.NODE_ENV = 'test';
 
 let chai = require('chai');
 let chaiHttp = require('chai-http');
+const { post } = require('../index');
 let should = chai.should();
 let server = require('../index');
+let postCategorie = require("../modules/postCategorie");
+var expect = chai.expect;
 
 chai.use(chaiHttp);
 
@@ -35,3 +38,12 @@ describe('/POST logs', () => {
   });
 
 });
+
+describe('hello world test suite', () => {
+  
+  it('returns a string Hello World',async () => {
+      expect(await postCategorie({
+        "name" : "Wouter"
+    })).to.be.a('object')
+  })
+})
