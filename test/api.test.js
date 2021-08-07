@@ -6,6 +6,7 @@ const { post } = require('../index');
 let should = chai.should();
 let server = require('../index');
 let postCategorie = require("../modules/postCategorie");
+const deleteCategorie = require("../modules/deleteCategorie");
 var expect = chai.expect;
 
 chai.use(chaiHttp);
@@ -39,11 +40,19 @@ describe('/POST logs', () => {
 
 });
 
-describe('hello world test suite', () => {
+describe('Post categorie test driven', () => {
   
-  it('returns a string Hello World',async () => {
+  it('returns a object',async () => {
       expect(await postCategorie({
         "name" : "Wouter"
     })).to.be.a('object')
+  })
+})
+
+describe('Delete categorie test driven', () => {
+  
+  it('returns a object',async () => {
+      expect(await deleteCategorie(
+        "Wouter" )).to.be.a('object')
   })
 })

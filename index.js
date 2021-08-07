@@ -2,6 +2,7 @@ const express = require('express')
 const app = express()
 const port = 3000
 const postCategorie = require('./modules/postCategorie')
+const deleteCategorie = require('./modules/deleteCategorie')
 app.use(express.json());
 app.use(express.urlencoded({
   extended: true
@@ -15,6 +16,12 @@ app.post('/categorie', async (req, response) => {
 
     response.send(await postCategorie(req.body));
 })
+
+app.delete('/categorie', async (req, response) => {
+
+    response.send(await deleteCategorie(req.query.name));
+})
+
 
 app.get('/categorie/all', async (req, response) => {
     var MongoClient = require('mongodb').MongoClient;
