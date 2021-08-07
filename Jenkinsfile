@@ -11,6 +11,12 @@ pipeline {
          }
          }
         }
+        stage('run test') {
+            steps {
+                sh "npm run test"
+            }
+        }
+
         stage('build & run') {
             steps {
                 sh "docker build -t ${packageJSONVersion} ."
